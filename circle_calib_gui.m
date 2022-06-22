@@ -17,19 +17,18 @@
 cell_list = {};
 
 fig_number = 1;
-
+%%
+%亚像素圆阈值检测
 circle_type="dark";%dark代表圆形比原始图像整体颜色更深，bright代表颜色比原始图像整体颜色更浅
 if circle_type=="dark"
     background_color=255;
 else
     background_color=0;
 end
-
-%亚像素圆阈值检测
-radiusRange=[5,20];
-edgeThresh=0.6;
-Sensitivity=0.95;
-
+radiusRange=[5,20]; %待检测圆像素半径
+edgeThresh=0.6;%待检测圆圆度阈值
+Sensitivity=0.95;%待检圆敏感度阈值
+%%
 title_figure = 'Camera Calibration Toolbox - Select mode of operation:';
 
 cell_list{1,1} = {'Standard (all the images are stored in memory)','circle_calib_gui_normal;'};
