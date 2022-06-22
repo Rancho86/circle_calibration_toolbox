@@ -18,7 +18,7 @@ format_image2 = '0';
 
 while format_image2 == '0',
    
-   format_image2 =  input('Image format: ([]=''r''=''ras'', ''b''=''bmp'', ''t''=''tif'', ''p''=''pgm'', ''j''=''jpg'', ''m''=''ppm'') ','s');
+   format_image2 =  input('Image format: ([]=''r''=''ras'', ''b''=''bmp'', ''t''=''tif'', ''p''=''pgm'', ''n''=''png'', ''j''=''jpg'', ''m''=''ppm'') ','s');
 	
 	if isempty(format_image2),
    	format_image2 = 'ras';
@@ -42,8 +42,12 @@ while format_image2 == '0',
                   if lower(format_image2(1)) == 'r',
                      format_image2 = 'ras';
                   else  
-                     disp('Invalid image format');
-                     format_image2 = '0'; % Ask for format once again
+                     if lower(format_image2(1)) == 'n',
+                        format_image2 = 'png';
+                     else
+                        disp('Invalid image format');
+                        format_image2 = '0'; % Ask for format once again
+                     end;
                   end;
                end;
             end;
@@ -60,9 +64,11 @@ ima_name = [image_name '.' format_image2];
 if format_image2(1) == 'p',
    if format_image2(2) == 'p',
       I = double(loadppm(ima_name));
-   else
+   elseif format_image2(2) == 'g',
       I = double(loadpgm(ima_name));
-   end;
+   else
+      I = double(imread(ima_name));
+   end
 else
    if format_image2(1) == 'r',
       I = readras(ima_name);

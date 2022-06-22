@@ -44,12 +44,12 @@ if exist('dY'),
     dY_default = dY;
 end;
 
-if exist('n_sq_x'),
-    n_sq_x_default = n_sq_x;
+if exist('n_sq_v'),
+    n_sq_v_default = n_sq_v;
 end;
 
-if exist('n_sq_y'),
-    n_sq_y_default = n_sq_y;
+if exist('n_sq_u'),
+    n_sq_u_default = n_sq_u;
 end;
 
 
@@ -66,9 +66,9 @@ if ~exist('dX_default')|~exist('dY_default');
 end;
 
 
-if ~exist('n_sq_x_default')|~exist('n_sq_y_default'),
-    n_sq_x_default = 10;
-    n_sq_y_default = 11;
+if ~exist('n_sq_v_default')|~exist('n_sq_u_default'),
+    n_sq_v_default = 10;
+    n_sq_u_default = 11;
 end;
 
 if ~exist('wintx_default')|~exist('winty_default'),
@@ -166,8 +166,8 @@ for kk = ima_proc,
         eval(['x_' num2str(kk) ' = NaN*ones(2,1);']);
         eval(['X_' num2str(kk) ' = NaN*ones(3,1);']);
         
-        eval(['n_sq_x_' num2str(kk) ' = NaN;']);
-        eval(['n_sq_y_' num2str(kk) ' = NaN;']);
+        eval(['n_sq_v_' num2str(kk) ' = NaN;']);
+        eval(['n_sq_u_' num2str(kk) ' = NaN;']);
     end;
 end;
 
@@ -186,8 +186,8 @@ for kk = 1:n_ima,
         eval(['x_' num2str(kk) ' = NaN*ones(2,1);']);
         eval(['X_' num2str(kk) ' = NaN*ones(3,1);']);
         
-        eval(['n_sq_x_' num2str(kk) ' = NaN;']);
-        eval(['n_sq_y_' num2str(kk) ' = NaN;']);
+        eval(['n_sq_v_' num2str(kk) ' = NaN;']);
+        eval(['n_sq_u_' num2str(kk) ' = NaN;']);
     end;
     
     if ~exist(['wintx_' num2str(kk)]) | ~exist(['winty_' num2str(kk)]),
@@ -201,7 +201,7 @@ end;
 string_save = 'save calib_data active_images ind_active wintx winty n_ima type_numbering N_slots first_num image_numbers format_image calib_name Hcal Wcal nx ny map dX_default dY_default dX dY wintx_default winty_default';
 
 for kk = 1:n_ima,
-    string_save = [string_save ' X_' num2str(kk) ' x_' num2str(kk) ' n_sq_x_' num2str(kk) ' n_sq_y_' num2str(kk) ' wintx_' num2str(kk) ' winty_' num2str(kk) ' dX_' num2str(kk) ' dY_' num2str(kk)];
+    string_save = [string_save ' X_' num2str(kk) ' x_' num2str(kk) ' n_sq_v_' num2str(kk) ' n_sq_u_' num2str(kk) ' wintx_' num2str(kk) ' winty_' num2str(kk) ' dX_' num2str(kk) ' dY_' num2str(kk)];
 end;
 
 eval(string_save);

@@ -20,7 +20,6 @@ end;
 fprintf(1,'Using (wintx,winty)=(%d,%d) - Window size = %dx%d      (Note: To reset the window size, run script clearwin)\n',wintx,winty,2*wintx+1,2*winty+1);
 %fprintf(1,'Note: To reset the window size, clear wintx and winty and run ''Extract grid corners'' again\n');
 
-
 figure(2);
 image(I);
 colormap(map);
@@ -51,33 +50,31 @@ figure(2); hold on;
          break
       end
      end
-     line([m(k-1) m(1)],[n(k-1) n(1)]);
+line([m(k-1) m(1)],[n(k-1) n(1)]);
 drawnow;
 hold off;
- BW = roipoly(I,m,n);  %感兴趣区域提取的二值图像
+BW = roipoly(I,m,n);  %感兴趣区域提取的二值图像
  
-    obj=I;
-    env=I;
-    obj(BW==0)=255;  %原图中显示目标区域
-    env(BW~=0)=0;  %原图中显示背景区域
-  radiusRange=[4,10];
-  method=[];
-  edgeThresh=0.5;
-  Sensitivity=0.95;
-[centers,radii,metric] = imfindcircles(obj ,radiusRange,'Method','phasecode', 'ObjectPolarity','dark','EdgeThreshold',edgeThresh,'Sensitivity',Sensitivity)
-
+obj=I;
+obj(BW==0)=background_color;  %原图中显示目标区域
+%亚像素圆检测
+%radiusRange=[5,20];
+%edgeThresh=0.6;
+%Sensitivity=0.95;
+%circle_type="dark";
+figure(3);
+imshow(obj); 
+[centers,radii,metric] = imfindcircles(obj ,radiusRange,'Method','phasecode', 'ObjectPolarity',circle_type,'EdgeThreshold',edgeThresh,'Sensitivity',Sensitivity)
+circlepic=viscircles(centers, radii,'Color','b');
 
 centers1=sortrows(centers,[1,2],{'descend' 'descend'})
-
 x = centers1(:,1);
 y = centers1(:,2);
-
-    
-n_sq_x = input(['Number of squares along the X direction ([]=' num2str(n_sq_x_default) ') = ']); %6
-if isempty(n_sq_x), n_sq_x = n_sq_x_default; end;
-n_sq_y = input(['Number of squares along the Y direction ([]=' num2str(n_sq_y_default) ') = ']); %6
-if isempty(n_sq_y), n_sq_y = n_sq_y_default; end; 
-
+  
+n_sq_v = input(['Number of circles along the v direction ([]=' num2str(n_sq_v_default) ') = ']); %6
+if isempty(n_sq_v), n_sq_v = n_sq_v_default; end;
+n_sq_u = input(['Number of circles along the u direction ([]=' num2str(n_sq_u_default) ') = ']); %6
+if isempty(n_sq_u), n_sq_u = n_sq_u_default; end; 
 
 sort2D=centers1
 R(1,:)=x;
@@ -109,10 +106,10 @@ else
 end
 [xfangxiang,indx] = sort(beipaixufangxiang);
  sort3D(:,:)=sort2D(indx,:);
-    for i=0:n_sq_y-1,
-    sort4D=sort3D(i*n_sq_x+1:i*n_sq_x+n_sq_x,:);
+    for i=0:n_sq_u-1,
+    sort4D=sort3D(i*n_sq_v+1:i*n_sq_v+n_sq_v,:);
     [yfangxiang,indy] = sort(sort4D(:,paixuzhou));
-    sort5D(i*n_sq_x+1:i*n_sq_x+n_sq_x,:)=sort4D(indy,:);
+    sort5D(i*n_sq_v+1:i*n_sq_v+n_sq_v,:)=sort4D(indy,:);
     end
 % sort5D(:,1)=x
 % sort5D(:,2)=y
@@ -192,8 +189,8 @@ y=sort5D(:,2)
 
    
 
-n_sq_x_default = n_sq_x;
-n_sq_y_default = n_sq_y;
+n_sq_v_default = n_sq_v;
+n_sq_u_default = n_sq_u;
 
 
 if (exist('dX')~=1)|(exist('dY')~=1), % This question is now asked only once
@@ -229,9 +226,9 @@ a01 = [x(4);y(4);1];
 
 % Build the grid using the planar collineation:
 
-x_l = ((0:n_sq_x-1)'*ones(1,n_sq_y))/n_sq_x;
-y_l = (ones(n_sq_x,1)*(0:n_sq_y-1))/n_sq_y;
-pts = [x_l(:) y_l(:) ones((n_sq_x)*(n_sq_y),1)]';
+x_l = ((0:n_sq_v-1)'*ones(1,n_sq_u))/n_sq_v;
+y_l = (ones(n_sq_v,1)*(0:n_sq_u-1))/n_sq_u;
+pts = [x_l(:) y_l(:) ones((n_sq_v)*(n_sq_u),1)]';
 
 XX = Homo*pts;
 XX = XX(1:2,:) ./ (ones(2,1)*XX(3,:));
@@ -239,8 +236,8 @@ XX = XX(1:2,:) ./ (ones(2,1)*XX(3,:));
 
 % Complete size of the rectangle
 
-W = n_sq_x*dX;
-L = n_sq_y*dY;
+W = n_sq_v*dX;
+L = n_sq_u*dY;
 
 
 
@@ -271,7 +268,7 @@ end;
 
 
 
-Np = (n_sq_x)*(n_sq_y);
+Np = (n_sq_v)*(n_sq_u);
 
 disp('Corner extraction...');
 
@@ -284,12 +281,12 @@ grid_pts = grid_pts - 1; % subtract 1 to bring the origin to (0,0) instead of (1
 
 
 
-ind_corners = [1 n_sq_x (n_sq_x)*n_sq_y (n_sq_x)*(n_sq_y)]; % index of the 4 corners
-ind_orig = (n_sq_x)*(n_sq_y-1) + 1;
+ind_corners = [1 n_sq_v (n_sq_v)*n_sq_u (n_sq_v)*(n_sq_u)]; % index of the 4 corners
+ind_orig = (n_sq_v)*(n_sq_u-1) + 1;
 xorig = grid_pts(1,ind_orig);
 yorig = grid_pts(2,ind_orig);
 dxpos = mean([grid_pts(:,ind_orig) grid_pts(:,ind_orig+1)]');
-dypos = mean([grid_pts(:,ind_orig) grid_pts(:,ind_orig-n_sq_x-1)]');
+dypos = mean([grid_pts(:,ind_orig) grid_pts(:,ind_orig-n_sq_v-1)]');
 
 
 x_box_kk = [grid_pts(1,:)-(wintx+.5);grid_pts(1,:)+(wintx+.5);grid_pts(1,:)+(wintx+.5);grid_pts(1,:)-(wintx+.5);grid_pts(1,:)-(wintx+.5)];
@@ -311,8 +308,8 @@ zoom on;
 drawnow;
 hold off;
 
-Xi = reshape(([0:n_sq_x-1]*dX)'*ones(1,n_sq_y),Np,1)';
-Yi = reshape(ones(n_sq_x,1)*[0:n_sq_y-1]*dY,Np,1)';
+Xi = reshape(([0:n_sq_v-1]*dX)'*ones(1,n_sq_u),Np,1)';
+Yi = reshape(ones(n_sq_v,1)*[0:n_sq_u-1]*dY,Np,1)';
 Zi = zeros(1,Np);
 
 Xgrid = [Xi;Yi;Zi];
@@ -335,5 +332,5 @@ eval(['winty_' num2str(kk) ' = winty;']);
 eval(['x_' num2str(kk) ' = x;']);
 eval(['X_' num2str(kk) ' = X;']);
 
-eval(['n_sq_x_' num2str(kk) ' = n_sq_x;']);
-eval(['n_sq_y_' num2str(kk) ' = n_sq_y;']);
+eval(['n_sq_v_' num2str(kk) ' = n_sq_v;']);
+eval(['n_sq_u_' num2str(kk) ' = n_sq_u;']);

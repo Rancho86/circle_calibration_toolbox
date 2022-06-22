@@ -20,10 +20,7 @@ fig_number = 1;
 
 circle_type="dark";%dark代表圆形比原始图像整体颜色更深，bright代表颜色比原始图像整体颜色更浅
 if circle_type=="dark"
-    background_color=255;
-else
-    background_color=0;
-end
+    circle_color=0
 
 %亚像素圆阈值检测
 radiusRange=[5,20];
